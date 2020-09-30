@@ -1,8 +1,9 @@
 from machine import I2C, Pin
-import pca9685
+# import pca9685
 import uasyncio
+import utils
 
-INTERNAL_LED = Pin(2, Pin.OUT)
+# INTERNAL_LED = Pin(2, Pin.OUT)
 
 """
 servos = servo.Servos(I2C(scl=Pin(5), sda=Pin(4))
@@ -10,38 +11,73 @@ for i in range(16):
     servos.position(i, us=1500)
 """
 
-servos = pca9685.Servos(I2C(scl=Pin(5), sda=Pin(4)))
+# servos = pca9685.Servos(I2C(scl=Pin(5), sda=Pin(4)))
 
 
-async def move(servo_pos, degrees, period_ms):
-    servos.position(servo_pos, degrees=degrees)
-    await uasyncio.sleep_ms(period_ms)
+# async def move(servo_pos, degrees, period_ms):
+#     servos.position(servo_pos, degrees=degrees)
+#     await uasyncio.sleep_ms(period_ms)
 
 
-class Leg:
-    SERVO_MAX = 170
-    SERVO_MIN = 10
-    DEFAULT_WAIT_MS = 150
-
+class Leg(utils.Utils):
     def __init__(self, upper, middle, lower):
         self._upper = upper
         self._middle = middle
         self._lower = lower
 
     async def up(self):
-        await uasyncio.create_task(move(self._middle, self.SERVO_MAX, self.DEFAULT_WAIT_MS))
+        await uasyncio.create_task(
+            self.move_servo(self._middle, self.DEFAULT_WAIT_MS, degrees=self.SERVO_MAX)
+        )
 
     async def down(self):
-        await uasyncio.create_task(move(self._middle, self.SERVO_MIN, self.DEFAULT_WAIT_MS))
+        await uasyncio.create_task(
+            self.move_servo(self._middle, self.DEFAULT_WAIT_MS, degrees=self.SERVO_MIN)
+        )
 
 
 async def main():
-    leg = Leg(upper=0, middle=1, lower=2)
-    while True:
-        await leg.up()
-        await uasyncio.sleep_ms(1000)
-        await leg.down()
-        await uasyncio.sleep_ms(1000)
+    u = utils.Utils()
+
+    u.test_servo_motor(0, 90)
+    u.test_servo_motor(0, 160)
+    u.test_servo_motor(0, 10)
+    # u.test_servo_motor(0, 90)
+    # u.test_servo_motor(0, 90)
+    # await u.move_servo(5, 1000, degrees=10)
+    # await u.move_servo(5, 1000, degrees=50)
+    # await u.move_servo(5, 1000, degrees=90)
+    # await u.move_servo(5, 1000, degrees=130)
+    # await u.move_servo(5, 1000, degrees=170)
+    # await u.move_servo(5, 1000, degrees=90)
+
+    # while True:
+    #     u.INTERNAL_LED.value(True)
+    #     await uasyncio.sleep_ms(500)
+    #     u.INTERNAL_LED.value(False)
+    #     await uasyncio.sleep_ms(700)
+
+    # leg = Leg(upper=0, middle=1, lower=2)
+    # while True:
+    #     await leg.up()
+    #     await uasyncio.sleep_ms(1000)
+    #     await leg.down()
+    #     await uasyncio.sleep_ms(1000)
+    # for i in range(16):
+    #     await uasyncio.create_task(move(i, Leg.SERVO_MIN, 0))
+    #
+    # await uasyncio.sleep_ms(1000)
+    #
+    # for i in range(16):
+    #     await uasyncio.create_task(move(i, Leg.SERVO_MAX, 0))
+    #
+    # await uasyncio.sleep_ms(1000)
+    #
+    # for i in range(16):
+    #     await uasyncio.create_task(move(i, Leg.SERVO_MID, 0))
+    #
+    # await uasyncio.sleep_ms(1000)
+
 
 
 uasyncio.run(main())
