@@ -25,6 +25,6 @@ class Utils:
 
     def test_servo_motor(self, motor_index, degrees):
         self.SERVOS.position(motor_index, degrees=degrees)
-        sleep(2)
+        sleep(1)
         self.SERVOS.release(motor_index)
         self.INTERNAL_LED.value(True)
