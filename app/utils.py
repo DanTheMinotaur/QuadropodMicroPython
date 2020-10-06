@@ -1,4 +1,4 @@
-import pca9685
+from app import pca9685
 from machine import I2C, Pin
 import uasyncio
 from time import sleep
@@ -23,8 +23,13 @@ class Utils:
         self.INTERNAL_LED.value(False)
         await uasyncio.sleep_ms(off_period_ms)
 
+    def move_servo_sync(self, motor_index, pos):
+        self.SERVOS.position(motor_index, degrees=pos)
+        sleep(0.5)
+        self.SERVOS.release(motor_index)
+
     def test_servo_motor(self, motor_index, degrees):
         self.SERVOS.position(motor_index, degrees=degrees)
-        sleep(1)
+        sleep(0.5)
         self.SERVOS.release(motor_index)
         self.INTERNAL_LED.value(True)

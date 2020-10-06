@@ -12,7 +12,8 @@ sudo chmod 777 /dev/ttyUSB0
 #### Test single motor using degrees
 
 ```python
-import utils
+
+from app import utils
 
 u = utils.Utils()
 
