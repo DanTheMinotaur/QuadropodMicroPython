@@ -1,4 +1,5 @@
 from app import utils
+import uasyncio
 
 
 class Motor(utils.Utils):
@@ -12,7 +13,10 @@ class Motor(utils.Utils):
         self._current_pos = pos
 
     def __str__(self):
-        return f"Index: {self._index}; Position: {self._current_pos};"
+        return "Index: {}; Position: {};".format(
+            self._index,
+            self._current_pos
+        )
 
 
 class Leg:
@@ -20,3 +24,10 @@ class Leg:
         self._upper = Motor(upper)
         self._middle = Motor(middle)
         self._lower = Motor(lower)
+
+    async def move_to(self, upper_pos=None, middle_pos=None, lower_pos=None):
+        await uasyncio.gather(
+            self._upper.move(upper_pos),
+            self._middle.move(middle_pos),
+            self._lower.move(lower_pos)
+        )
