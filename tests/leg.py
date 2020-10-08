@@ -1,57 +1,93 @@
 from app.bot import Leg
 import uasyncio
 
-left_front = Leg(0, 1, 2)
-left_back = Leg(3, 4, 5)
-right_front = Leg(9, 10, 11)
-right_back = Leg(6, 7, 8)
+legs = {
+    "left_front": Leg(0, 1, 2),
+    "left_back": Leg(3, 4, 5),
+    "right_front": Leg(9, 10, 11),
+    "right_back": Leg(6, 7, 8)
+}
+
 
 """
 Test for leg class to use through REPL
 
-import uasyncio
-from tests.leg import set_defaults, set_flat, set_stand
+from uasyncio import run
+from tests.leg import move_leg, default, flat, sit, stand, legs
 
-uasyncio.run()
 """
 
 
-async def set_defaults():
-    pos = [
-        left_front.move_to(upper_pos=90, middle_pos=150, lower_pos=30),
-        right_back.move_to(upper_pos=90, middle_pos=150, lower_pos=30),
-        right_front.move_to(upper_pos=90, middle_pos=30, lower_pos=150),
-        left_back.move_to(upper_pos=90, middle_pos=30, lower_pos=150)
-    ]
-    await uasyncio.gather(*pos)
+def move_leg(leg, upper, middle, lower):
+    _map = {
+        'lf': "left_front",
+        'rb': "right_back",
+        'rf': "right_front",
+        'lb': "left_back"
+    }
+    uasyncio.run(legs[_map[leg]].move_to(upper, middle, lower))
 
 
-async def set_flat():
-    await uasyncio.gather(
-        right_front.move_to(upper_pos=90, middle_pos=30, lower_pos=30),
-        left_back.move_to(upper_pos=90, middle_pos=30, lower_pos=30),
-        right_back.move_to(upper_pos=90, middle_pos=150, lower_pos=150),
-        left_front.move_to(upper_pos=90, middle_pos=150, lower_pos=150)
-    )
+def default():
+    async def set_defaults():
+        pos = [
+            legs["left_front"].move_to(75, 120, 30),
+            legs["left_back"].move_to(105, 60, 150),
+            legs["right_front"].move_to(105, 60, 150),
+            legs["right_back"].move_to(75, 120, 30)
+        ]
+        await uasyncio.gather(*pos)
+    uasyncio.run(set_defaults())
 
 
-async def sit():
-    await uasyncio.gather(
-        left_front.move_to(upper_pos=90, middle_pos=180, lower_pos=30),
-        right_front.move_to(90, 110, 80)
-    )
+def flat():
+    async def set_flat():
+        await uasyncio.gather(
+            legs["right_front"].move_to(upper_pos=90, middle_pos=30, lower_pos=30),
+            legs["left_back"].move_to(upper_pos=90, middle_pos=30, lower_pos=30),
+            legs["right_back"].move_to(upper_pos=90, middle_pos=150, lower_pos=150),
+            legs["left_front"].move_to(upper_pos=90, middle_pos=150, lower_pos=150)
+        )
+
+    uasyncio.run(set_flat())
 
 
-# async def move_leg():
-#     left_front = Leg(0, 1, 2)
-#     left_back = Leg(3, 4, 5)
-#
-#     await left_front.move_to(upper_pos=90, middle_pos=150, lower_pos=30)  # Default position
-#
-#     await left_front.move_to(upper_pos=150, middle_pos=90, lower_pos=90)
-#
-#     await left_front.move_to(upper_pos=90, middle_pos=150, lower_pos=30)
-#
-#     await left_front.move_to(upper_pos=30, middle_pos=90, lower_pos=150)
-#     # await left_back.move_to()
+def sit():
+    async def set_sit():
+        await uasyncio.gather(
+            legs["left_front"].move_to(None, 90, 30),
+            legs["left_back"].move_to(None, 90, 150),
+            legs["right_front"].move_to(None, 90, 150),
+            legs["right_back"].move_to(None, 90, 30)
+        )
 
+    uasyncio.run(set_sit())
+
+
+def stand():
+    async def set_stand():
+        await uasyncio.gather(
+            legs["left_front"].move_to(None, 90, 10),
+            legs["left_back"].move_to(None, 90, 170),
+            legs["right_front"].move_to(None, 90, 170),
+            legs["right_back"].move_to(None, 90, 10)
+        )
+        await uasyncio.gather(
+            legs["left_front"].move_to(None, 150, 20),
+            legs["left_back"].move_to(None, 30, 160),
+            legs["right_front"].move_to(None, 30, 160),
+            legs["right_back"].move_to(None, 150, 20)
+        )
+        await uasyncio.gather(
+            legs["left_front"].move_to(None, 120, 30),
+            legs["left_back"].move_to(None, 60, 150),
+            legs["right_front"].move_to(None, 60, 150),
+            legs["right_back"].move_to(None, 120, 30)
+        )
+        # await uasyncio.gather(
+        #     legs["left_front"].move_to(None, 140, 50),
+        #     legs["left_back"].move_to(None, 40, 130),
+        #     legs["right_front"].move_to(None, 40, 130),
+        #     legs["right_back"].move_to(None, 140, 50)
+        # )
+    uasyncio.run(set_stand())
