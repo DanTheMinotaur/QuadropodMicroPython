@@ -8,10 +8,11 @@ class Motor(utils.Utils):
         self._current_pos = None
 
     async def move(self, pos=None):
-        if pos:
-            await self.move_servo(self._index, 1000, degrees=pos)
-            self.SERVOS.release(self._index)
-            self._current_pos = pos
+        if pos is None:
+            pos = self._current_pos
+        await self.move_servo(self._index, 500, degrees=pos)
+        self.SERVOS.release(self._index)
+        self._current_pos = pos
 
     def __str__(self):
         return "Index: {}; Position: {};".format(
